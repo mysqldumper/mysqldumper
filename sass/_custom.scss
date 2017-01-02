@@ -1,0 +1,89 @@
+html,
+body {
+    font-family: $main-font;
+}
+
+.page-content {
+    padding-top: 60px;
+
+    .logo-row {
+        margin-bottom: 30px;
+
+        img {
+            max-width: 300px;
+            @include center-image();
+        }
+    }
+
+    .error-row {
+        text-align: center;
+        color: red;
+        margin-bottom: 10px;
+    }
+}
+
+.panel-default {
+    border-color: lighten($midnight-blue, 20%);
+
+    .panel-heading {
+        background-color: $midnight-blue;
+        color: $clouds;
+        text-align: center;
+    }
+}
+
+.btn-default {
+    background-color: $midnight-blue;
+    color: $clouds;
+    border-color: lighten($midnight-blue, 20%);
+}
+
+footer {
+    text-align: center;
+}
+
+table.aligned {
+    tr {
+        th,
+        td {
+            text-align: center;
+
+            &:first-child {
+                text-align: left;
+            }
+        }
+    }
+}
+
+table.dbinfo-table {
+    tr {
+        th,
+        td {
+            &:last-child {
+                text-align: right;
+            }
+        }
+    }
+}
+
+.italic {
+    font-style: italic;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.table-pagination {
+    text-align: center;
+}
+
+.compressionType {
+    height: 19px;
+    padding: 1px 12px;
+}
+
+#dumpingLoader {
+    text-align: center;
+    display: none;
+}

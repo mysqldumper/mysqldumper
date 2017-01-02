@@ -1,0 +1,18 @@
+// Device sizes for easier media queries.
+$size-xs : "(max-width: 767px)";
+$size-sm : "(min-width: 768px) and (max-width: 991px)";
+$size-md : "(min-width: 992px) and (max-width: 1199px)";
+$size-lg : "(min-width: 1200px)";
+
+$size-sm-and-above : "(min-width: 768px)";
+$size-md-and-above : "(min-width: 992px)";
+
+// Colors
+$white         : #ffffff;
+$black         : #000000;
+$midnight-blue : #2c3e50;
+$clouds        : #ecf0f1;
+
+// Fonts
+$main-font : 'Inconsolata', monospace;
+$sub-font  : 'Open Sans', sans-serif;

@@ -1,0 +1,7 @@
+# Dirs
+node_modules
+
+# Files
+yarn.lock
+include/config.php
+*.psd
