@@ -28,7 +28,7 @@ class MSD
     public function init()
     {
         if (! $this->isInstalled()) {
-            $msd->redirect('install');
+            $this->redirect('install');
         }
     }
 
