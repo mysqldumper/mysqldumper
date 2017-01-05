@@ -29,6 +29,7 @@ body {
         background-color: $midnight-blue;
         color: $clouds;
         text-align: center;
+        font-family: $sub-font;
     }
 }
 
@@ -36,6 +37,7 @@ body {
     background-color: $midnight-blue;
     color: $clouds;
     border-color: lighten($midnight-blue, 20%);
+    font-family: $sub-font;
 }
 
 footer {
@@ -86,4 +88,14 @@ table.dbinfo-table {
 #dumpingLoader {
     text-align: center;
     display: none;
+}
+
+#downloadThatDatabase {
+    display: none;
+}
+
+.progress {
+    .progress-bar {
+        font-family: $sub-font;
+    }
 }

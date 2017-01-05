@@ -1,6 +1,8 @@
-var dumpLock       = false;
-var rowRecursion   = 0;
-var tableRecursion = 0;
+var dumpLock                    = false;
+var rowRecursion                = 0;
+var tableRecursion              = 0;
+var fixedFilename               = '';
+var fixedFilenameWithExtension  = '';
 
 $(document).ready(function () {
 
@@ -40,7 +42,7 @@ $(document).ready(function () {
 
     if($('#dumpFilename').length) {
         // Dump functions onload
-        setFilename();
+        setFilename(true);
     }
 
     $('#compressionType').change(function(e) {
@@ -67,14 +69,20 @@ $(document).ready(function () {
             setProgressBar('0');
 
             // Do the dump!
-            dumpDatabase(filename, databaseName, tableName, 10000);
+            dumpDatabase(filename, databaseName, tableName, 10000, compressionType);
         }
+    });
+
+    $('#downloadThatDatabase').click(function(e) {
+        downloadFile();
     });
 
 });
 
-setFilename = function()
+setFilename = function(setGlobally)
 {
+    setGlobally = setGlobally || false;
+
     var databaseName = $('#databaseName').val();
     var tableName    = '';
 
@@ -92,36 +100,46 @@ setFilename = function()
     var filenameDate = d.getFullYear() + '-' + (('' + month).length < 2 ? '0' : '') + month + '-' + (('' + day).length < 2 ? '0' : '') + day;
     var filenameTime = hours + '-' + minutes + '-' + seconds;
 
-    var filename = databaseName + '_' + ((tableName !== '') ? tableName + '_' : '') + filenameDate + '-' + filenameTime + '.sql';
+    if (setGlobally) {
+        fixedFilename = databaseName + '_' + ((tableName !== '') ? tableName + '_' : '') + filenameDate + '-' + filenameTime;
+    }
 
     // Get default compression type
     var compressionType = $('#compressionType').find(':selected').val();
 
-    if (compressionType === 'gzip') {
-        filename = filename + '.gz';
-    }
+    filename = fixedFilename + $('#compressionType').find(':selected').data('extension');
 
     $('#dumpFilename').text(filename);
+
+    fixedFilenameWithExtension = filename;
 }
 
-dumpDatabase = function(filename, databaseName, tableName, rowLimit)
+dumpDatabase = function(filename, databaseName, tableName, rowLimit, compressionType)
 {
-    rowLimit  = rowLimit  || 10000;
-    tableName = tableName || '';
+    rowLimit        = rowLimit  || 10000;
+    tableName       = tableName || '';
+    compressionType = compressionType || 'off';
 
     rowRecursion++;
 
     if (tableName === '') {
         // Full database dump
         if (tablesObject[tableRecursion]) {
-            staggerDump(databaseName, tablesObject[tableRecursion], filename, rowLimit, true);
+            staggerDump(databaseName, tablesObject[tableRecursion], filename, rowLimit, true, compressionType);
         } else {
             $('#dumpingLoader').slideUp('fast');
-            setProgressBar('Dump of `' + databaseName + '` completed.', true);
+            setProgressBar('100');
+
+            if (compressionType != 'off') {
+                setProgressBar('Compressing dump..');
+                compressDump(filename, databaseName, tableName, compressionType, true);
+            } else {
+                setProgressBar('Dump of `' + databaseName + '` completed.', true);
+            }
         }
     } else {
         // Table only dump
-        staggerDump(databaseName, tableName, filename, rowLimit, false);
+        staggerDump(databaseName, tableName, filename, rowLimit, false, compressionType);
     }
 }
 
@@ -129,14 +147,22 @@ setProgressBar = function(value, isText)
 {
     isText = isText || false;
 
+    if (value == '100') {
+        showDownloadButton();
+    }
+
     if (isText) {
         $('#dumpProgress').text(value);
     } else {
+        if (value == '100') {
+            $('#dumpProgress').removeClass('active').removeClass('progress-bar-striped').addClass('progress-bar-success');
+        }
+
         $('#dumpProgress').css('width', value + '%').text(value + '%');
     }
 }
 
-staggerDump = function(databaseName, tableName, filename, rowLimit, isFullDump)
+staggerDump = function(databaseName, tableName, filename, rowLimit, isFullDump, compressionType)
 {
     $.get('dump.php', {
         do:       'dump',
@@ -156,21 +182,58 @@ staggerDump = function(databaseName, tableName, filename, rowLimit, isFullDump)
             setProgressBar(percentRounded.toString());
 
             if (data != '100') {
-                dumpDatabase(filename, databaseName, '', rowLimit);
+                dumpDatabase(filename, databaseName, '', rowLimit, compressionType);
             } else {
                 tableRecursion++;
                 rowRecursion = 0;
-                dumpDatabase(filename, databaseName, '', rowLimit);
+                dumpDatabase(filename, databaseName, '', rowLimit, compressionType);
             }
         } else {
             setProgressBar(data);
 
             if (data == '100') {
                 $('#dumpingLoader').slideUp('fast');
-                setProgressBar('Dump of `' + databaseName + '`.`' + tableName + '` completed.', true);
+                
+                if (compressionType != 'off') {
+                    setProgressBar('Compressing dump..', true);
+                    compressDump(filename, databaseName, tableName, compressionType, false);
+                } else {
+                    setProgressBar('Dump of `' + databaseName + '`.`' + tableName + '` completed.', true);
+                }
             } else {
-                dumpDatabase(filename, databaseName, tableName, rowLimit);
+                dumpDatabase(filename, databaseName, tableName, rowLimit, compressionType);
             }
         }
     });
+}
+
+compressDump = function(filename, databaseName, tableName, compressionType, isFullDump)
+{
+    $.get('compress.php', {
+        filename:    filename,
+        database:    databaseName,
+        table:       tableName,
+        compression: compressionType
+    }, function(data) {
+        if (data == '100') {
+            if (isFullDump) {
+                setProgressBar('Dump of `' + databaseName + '` completed.', true);
+            } else {
+                setProgressBar('Dump of `' + databaseName + '`.`' + tableName + '` completed.', true);
+            }
+        }
+    });
+}
+
+showDownloadButton = function()
+{
+    var filename = fixedFilenameWithExtension;
+
+    $('#downloadThatDatabase').text('Download ' + filename);
+    $('#downloadThatDatabase').slideDown('fast');
+}
+
+downloadFile = function()
+{
+    window.location = 'dump.php?do=download&filename=' + fixedFilenameWithExtension;
 }

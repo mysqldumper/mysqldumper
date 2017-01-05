@@ -24,6 +24,16 @@ if ($do) {
             $msd->dumpDatabase($databaseName, $tableName, $fileName, $start, $end);
             break;
 
+        case 'download':
+            $fileName = filter_input(INPUT_GET, 'filename', FILTER_SANITIZE_STRING);
+
+            if (! $fileName) {
+                $msd->redirect('index');
+            }
+
+            $msd->downloadFile($fileName);
+            break;
+
         default:
             $msd->redirect('index');
             break;
