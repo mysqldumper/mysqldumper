@@ -1,5 +1,6 @@
 # Dirs
 node_modules
+dumps
 
 # Files
 yarn.lock

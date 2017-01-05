@@ -76,7 +76,7 @@ global $msd, $databaseName, $tableName, $tableInfo, $tableColumns, $tableData, $
                                     <?php foreach ($tableData as $row) : ?>
                                         <tr>
                                             <?php foreach ($tableColumns as $column) : ?>
-                                                <td><?= $row[$column] ?></td>
+                                                <td><?= htmlspecialchars($row[$column]) ?></td>
                                             <?php endforeach; ?>
 
                                             <td>

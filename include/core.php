@@ -16,7 +16,9 @@ session_start();
 class MSD
 {
     public $db;
-    public $version = '2.2.0-dev';
+    public $version = '2.2.0-dev.3';
+
+    private $pathToDumpsFolder = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'dumps';
 
     function __construct()
     {
@@ -28,10 +30,6 @@ class MSD
         if (! $this->isInstalled()) {
             $this->redirect('install');
         }
-
-        // include(__DIR__ . '/config.php');
-
-        // $this->db = new mysqli($config['mysqlHost'], $config['mysqlUsername'], $config['mysqlPassword'], '', $config['mysqlPort']);
     }
 
     public function displayTemplate($template)
@@ -192,25 +190,26 @@ class MSD
 
     public function byteConversion($bytes, $precision = 2)
     {
-        $bytes = intval($bytes);
+        $bytes = floatval($bytes);
 
         $kilobyte = 1024;
         $megabyte = $kilobyte * 1024;
         $gigabyte = $megabyte * 1024;
         $terabyte = $gigabyte * 1024;
 
-        if (($bytes >= 0) && ($bytes < $kilobyte)) {
-            return $bytes . ' B';
-        } elseif (($bytes >= $kilobyte) && ($bytes < $megabyte)) {
-            return round($bytes / $kilobyte, $precision) . ' KB';
-        } elseif (($bytes >= $megabyte) && ($bytes < $gigabyte)) {
-            return round($bytes / $megabyte, $precision) . ' MB';
-        } elseif (($bytes >= $gigabyte) && ($bytes < $terabyte)) {
-            return round($bytes / $gigabyte, $precision) . ' GB';
-        } elseif ($bytes >= $terabyte) {
-            return round($bytes / $terabyte, $precision) . ' TB';
-        } else {
-            return $bytes . ' B';
+        switch ($bytes) {
+            case (($bytes >= 0) && ($bytes < $kilobyte)) :
+                return $bytes . ' B';
+            case (($bytes >= $kilobyte) && ($bytes < $megabyte)) :
+                return round($bytes / $kilobyte, $precision) . ' KB';
+            case (($bytes >= $megabyte) && ($bytes < $gigabyte)) :
+                return round($bytes / $megabyte, $precision) . ' MB';
+            case (($bytes >= $gigabyte) && ($bytes < $terabyte)) :
+                return round($bytes / $gigabyte, $precision) . ' GB';
+            case ($bytes >= $terabyte) :
+                return round($bytes / $terabyte, $precision) . ' TB';
+            default:
+                return $bytes . ' B';
         }
     }
 
@@ -484,8 +483,7 @@ class MSD
 
     public function dumpDatabase($databaseName, $tableName, $fileName, $start, $end)
     {
-        $pathToDumpsFolder = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'dumps';
-        $pathToDumpFile    = $pathToDumpsFolder . DIRECTORY_SEPARATOR . $fileName;
+        $pathToDumpFile = $this->pathToDumpsFolder . DIRECTORY_SEPARATOR . $fileName;
 
         // Create the file if it doesn't exist.
         if (! file_exists($pathToDumpFile)) {
@@ -518,6 +516,8 @@ class MSD
             file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
         }
 
+        $tableData = $this->getTableDumpData($databaseName, $tableName, $start, $end);
+
         // Write the table header, and dump the CREATE TABLE syntax.
         if ($start == 0) {
             file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
@@ -526,18 +526,65 @@ class MSD
 
             file_put_contents($pathToDumpFile, $this->getCreateTableSyntax($databaseName, $tableName) . PHP_EOL, FILE_APPEND);
 
-            file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
-            file_put_contents($pathToDumpFile, '-- Dumping data for `' . $tableName . '`' . PHP_EOL, FILE_APPEND);
-            file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
+            if (count($tableData) > 0) {
+                file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
+                file_put_contents($pathToDumpFile, '-- Dumping data for `' . $tableName . '`' . PHP_EOL, FILE_APPEND);
+                file_put_contents($pathToDumpFile, PHP_EOL, FILE_APPEND);
+            }
         }
         
-        $tableData = $this->getTableDumpData($databaseName, $tableName, $start, $end);
-
         $insertSyntax = $this->getInsertRowSyntax($databaseName, $tableName, $tableData, 500);
 
         file_put_contents($pathToDumpFile, $insertSyntax, FILE_APPEND);
 
         echo $this->getPercentComplete($databaseName, $tableName, $end);
+    }
+
+    public function compressDump($fileName, $databaseName, $tableName = '', $compressionType = 'off')
+    {
+        $pathToDumpFile = $this->pathToDumpsFolder . DIRECTORY_SEPARATOR . $fileName;
+
+        switch ($compressionType) {
+            case 'off':
+                break;
+
+            case 'gzip':
+                $original        = file_get_contents($pathToDumpFile);
+                $backup          = file_put_contents($pathToDumpFile . '.backup', $original);
+                $compressed      = gzencode($original);
+                $writeCompressed = file_put_contents($pathToDumpFile, $compressed);
+                break;
+        }
+
+        echo '100';
+        exit;
+    }
+
+    public function downloadFile($fileName)
+    {
+        $filePath = $this->pathToDumpsFolder . DIRECTORY_SEPARATOR . $fileName;
+
+        if (! file_exists($filePath)) {
+            return false;
+        }
+
+        $mimeType = mime_content_type($filePath);
+
+        if (! $mimeType) {
+            $mimeType = 'application/octet-stream';
+        }
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $mimeType);
+        header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+
+        readfile($filePath);
+
+        exit;
     }
 }
 

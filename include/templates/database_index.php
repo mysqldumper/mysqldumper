@@ -30,7 +30,11 @@ global $msd, $tables, $databaseName, $database;
                                 $size = 0;
 
                                 foreach ($tables as $table) {
-                                    $size = intval($size + $table['size']);
+                                    if (! $table['size']) {
+                                        $table['size'] = 0;
+                                    }
+
+                                    $size = floatval($size + $table['size']);
                                 }
 
                                 ?>
@@ -79,7 +83,7 @@ global $msd, $tables, $databaseName, $database;
                                             </a>
                                         </td>
 
-                                        <td><?= $table['rows'] ?></td>
+                                        <td><?= (($table['rows']) ? $table['rows'] : '0') ?></td>
                                         <td><?= $msd->byteConversion($table['size']) ?></td>
                                         
                                         <td>

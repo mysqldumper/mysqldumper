@@ -62,8 +62,8 @@ global $msd, $databaseName, $tableName;
                                 </td>
                                 <td>
                                     <select class="form-control compressionType" name="compressionType" id="compressionType">
-                                        <option value="off" selected>Off</option>
-                                        <!-- <option value="gzip" selected>On (gzip)</option> -->
+                                        <option value="off" data-extension=".sql" selected>Off</option>
+                                        <option value="gzip" data-extension=".sql.gz" selected>On (gzip)</option>
                                     </select>
                                 </td>
                             </tr>
@@ -83,6 +83,8 @@ global $msd, $databaseName, $tableName;
                                 <img src="assets/images/loader.gif" alt="Dumping in progress">
                             </div>
                         </div>
+
+                        <button class="btn btn-default form-control" id="downloadThatDatabase"></button>
                     </div>
                 </div>
 
