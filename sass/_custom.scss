@@ -1,6 +1,14 @@
 html,
 body {
     font-family: $main-font;
+
+    &.settings-pane-open {
+        overflow: hidden;
+    }
+
+    &.modal-open {
+        padding-right: 0 !important;
+    }
 }
 
 .page-content {
@@ -96,6 +104,74 @@ table.dbinfo-table {
 
 .progress {
     .progress-bar {
-        font-family: $sub-font;
+        font-family : $sub-font;
     }
+}
+
+.settings-pane {
+    position: fixed;
+    bottom: 0;
+    right: -$settings-menu-width;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: $settings-menu-width;
+    z-index: 1;
+    font-family: $sub-font;
+
+    .open-settings-pane {
+        position: absolute;
+        top: 40px;
+        left: -40px;
+        height: 40px;
+        width: 40px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border: none;
+        outline: none;
+
+        #closeSettingsPaneIcon {
+            display: none;
+        }
+    }
+
+    .settings-pane-inner {
+        color: $white;
+        height: 100%;
+        width: 100%;
+        padding: 0px 15px;
+    }
+
+    .settings-pane-title {
+        text-align: center;
+        font-size: 16pt;
+        margin-top: 10px;
+        margin-bottom: 50px;
+    }
+}
+
+.settings-pane-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 1;
+}
+
+.btn-settings {
+    background-color: transparent;
+    border-color: $white;
+    color: $white;
+    outline: none !important;
+
+    &:hover, &:active, &:focus {
+        color: $white;
+        border-color: $white;
+        box-shadow: none;
+    }
+}
+
+.modal-backdrop {
+    z-index: 0;
 }

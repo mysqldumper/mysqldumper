@@ -77,7 +77,92 @@ $(document).ready(function () {
         downloadFile();
     });
 
+    $('#openSettingsPane').click(function(e) {
+        if ($('#settingsPane').hasClass('open')) {
+            settingsPane('close');
+        } else {
+            settingsPane('open')
+        }
+    });
+
+    $('.settings-pane-mask').click(function(e) {
+        settingsPane('close');
+    });
+
+    $('.btn-save-setting').click(function(e) {
+        var $this = $(this);
+        var theId = $this.data('input-id');
+        var key   = $this.data('key');
+        var value = $('#' + theId).val();
+
+        saveSetting(key, value, $this);
+    });
+
 });
+
+settingsPane = function(action)
+{
+    action = action || 'open';
+
+    if (action == 'open') {
+        // Open form
+        $('.settings-pane-mask').fadeIn();
+
+        $('#openSettingsPaneIcon').fadeOut(function() {
+            $('#closeSettingsPaneIcon').fadeIn();
+        });
+
+        $('#settingsPane').animate({
+            right: '0px'
+        }, 400);
+
+        $('body').animate({
+            marginRight: '300px'
+        }, 400);
+
+        $('#settingsPane').addClass('open');
+    } else if (action == 'close') {
+        // Close form
+        $('.settings-pane-mask').fadeOut();
+
+        $('#closeSettingsPaneIcon').fadeOut(function() {
+            $('#openSettingsPaneIcon').fadeIn();
+        });
+
+        $('#settingsPane').animate({
+            right: '-300px'
+        }, 400);
+
+        $('body').animate({
+            marginRight: '0'
+        }, 400);
+
+        $('#settingsPane').removeClass('open');
+    }
+
+    $('body').toggleClass('settings-pane-open');
+}
+
+saveSetting = function(key, value, $this)
+{
+    $this.prop('disabled', true);
+    $this.text('Saving..');
+
+    $.post('save_setting.php', {
+        key   : key,
+        value : value
+    }, function(data) {
+        if (data == 'saved') {
+            $this.prop('disabled', false);
+            $this.text('Save');
+            $('#' + $this.data('modal-id')).modal('hide');
+        } else {
+            alert('Your settings were not saved due to an error.');
+            $this.prop('disabled', false);
+            $this.text('Save');
+        }
+    });
+}
 
 setFilename = function(setGlobally)
 {

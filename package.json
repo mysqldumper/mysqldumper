@@ -1,5 +1,5 @@
 {
-  "name": "MSD2",
+  "name": "MSD",
   "version": "2.2.0",
   "description": "The world's best MySQL Dumper.",
   "main": "index.js",
@@ -8,11 +8,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:xijbx/mysqldumper2.git"
+    "url": "git+ssh://git@github.com:xijbx/mysqldumper.git"
   },
   "author": "",
   "license": "MIT",
-  "homepage": "https://xijbx.github.io/mysqldumper2/",
+  "homepage": "https://xijbx.github.io/mysqldumper/",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.7",
+    "bootstrap-toggle": "^2.2.2",
     "clean-css": "^3.4.20",
     "font-awesome": "^4.6.3",
     "gulp-clean-css": "^2.0.13",

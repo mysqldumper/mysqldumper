@@ -16,13 +16,15 @@ session_start();
 class MSD
 {
     public $db;
-    public $version = '2.2.0-dev.3';
+    public $version = '2.2.0-dev.4';
+    public $settings;
 
+    private $settingsFile      = __DIR__ . DIRECTORY_SEPARATOR . 'settings.json';
     private $pathToDumpsFolder = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'dumps';
 
     function __construct()
     {
-        // No construct method just yet. Maybe I'll fill this method with magic some day.
+        
     }
 
     public function init()
@@ -30,6 +32,21 @@ class MSD
         if (! $this->isInstalled()) {
             $this->redirect('install');
         }
+
+        // Set the settings file path
+        if (file_exists(DIRECTORY_SEPARATOR . 'tmp') && is_writable(DIRECTORY_SEPARATOR . 'tmp')) {
+            $this->settingsFile = DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'settings.json';
+        }
+
+        // Create settings.json if not found
+        if (! file_exists($this->settingsFile)) {
+            $this->writeDefaultSettingsFile();
+        }
+
+        // Parse settings
+        $this->settings = json_decode(file_get_contents($this->settingsFile));
+
+        $this->pathToDumpsFolder = $this->settings->dumpSettings->path;
     }
 
     public function displayTemplate($template)
@@ -49,7 +66,7 @@ class MSD
 
     private function getTemplate($template)
     {
-        @include(__DIR__ . '/templates/' . $template . '.php');
+        @include(__DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $template . '.php');
     }
 
     private function head_main()
@@ -76,35 +93,115 @@ class MSD
         $getTemplate = $this->getTemplate($template);
     }
 
-    public function verifyConnection(array $connectionVars)
+    public function isInstalled()
     {
+        if (! file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
+            return false;
+        }
+
+        if (! $this->verifyConnection()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function verifyConnection(array $connectionVars = [])
+    {
+        if (empty($connectionVars)) {
+            require_once(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
+            $connectionVars = $config;
+        }
+
         $mysqli = new mysqli($connectionVars['mysqlHost'], $connectionVars['mysqlUsername'], $connectionVars['mysqlPassword'], '', $connectionVars['mysqlPort']);
 
         if ($mysqli->connect_error) {
             return false;
         }
 
-        $this->db = $mysqli;
+        if (! $this->db) {
+            $this->db = $mysqli;
+        }
 
         return true;
     }
 
     public function generateConfigFile(array $connectionVars)
     {
-        $getConfig = @file_get_contents(__DIR__ . '/config-example.php'); 
+        $getConfig = @file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'config-example.php'); 
 
         $getConfig = preg_replace('/<--DB_HOST-->/', $connectionVars['mysqlHost'], $getConfig);
         $getConfig = preg_replace('/<--DB_PORT-->/', $connectionVars['mysqlPort'], $getConfig);
         $getConfig = preg_replace('/<--DB_USER-->/', $connectionVars['mysqlUsername'], $getConfig);
         $getConfig = preg_replace('/<--DB_PASS-->/', $connectionVars['mysqlPassword'], $getConfig);
 
-        $write = @file_put_contents(__DIR__ . '/config.php', $getConfig);
+        $write = @file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'config.php', $getConfig);
+
+        if ($write) {
+            if ($this->writeDefaultSettingsFile()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function writeDefaultSettingsFile()
+    {
+        // Already exists, let's not overwrite it eh
+        if (file_exists($this->settingsFile)) {
+            return true;
+        }
+
+        // Set the settings file path
+        if (file_exists(DIRECTORY_SEPARATOR . 'tmp') && is_writable(DIRECTORY_SEPARATOR . 'tmp')) {
+            $this->settingsFile = DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'settings.json';
+        }
+
+        $settings = new stdClass;
+        $settings->dumpSettings = new stdClass;
+        $settings->dumpSettings->path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'dumps';
+
+        $encoded = json_encode($settings);
+
+        $write = @file_put_contents($this->settingsFile, $encoded);
 
         if ($write) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
+    }
+
+    public function writeNewSettingsFile()
+    {
+        $encoded = json_encode($this->settings);
+
+        $write = @file_put_contents($this->settingsFile, $encoded);
+
+        if ($write) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function saveSetting($key, $value)
+    {
+        switch ($key) {
+            case 'dumpPath' :
+                $this->settings->dumpSettings->path = $value;
+
+                break;
+        }
+
+        if ($this->writeNewSettingsFile()) {
+            echo 'saved';
+        } else {
+            echo 'failed';
+        }
+
+        exit;
     }
 
     public function tempSave($index, $data)
@@ -121,21 +218,6 @@ class MSD
     {
         header('Location: ' . $to . '.php');
         exit;
-    }
-
-    public function isInstalled()
-    {
-        if (! file_exists(__DIR__ . '/config.php')) {
-            return false;
-        }
-
-        require_once(__DIR__ . '/config.php');
-
-        if (! $this->verifyConnection($config)) {
-            return false;
-        }
-
-        return true;
     }
 
     public function getTableCount($databaseName)
@@ -483,6 +565,10 @@ class MSD
 
     public function dumpDatabase($databaseName, $tableName, $fileName, $start, $end)
     {
+        if (! file_exists($this->pathToDumpsFolder)) {
+            @mkdir($this->pathToDumpsFolder);
+        }
+
         $pathToDumpFile = $this->pathToDumpsFolder . DIRECTORY_SEPARATOR . $fileName;
 
         // Create the file if it doesn't exist.
