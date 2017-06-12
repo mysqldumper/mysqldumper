@@ -16,7 +16,7 @@ session_start();
 class MSD
 {
     public $db;
-    public $version = '2.2.0-dev.4';
+    public $version = '2.2.0-dev.5';
     public $settings;
 
     private $settingsFile      = __DIR__ . DIRECTORY_SEPARATOR . 'settings.json';

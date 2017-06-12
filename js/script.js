@@ -14,7 +14,7 @@ $(document).ready(function () {
             $('footer .container .row .col-sm-12').append("<p class=\"text-muted italic\">Easter Egg! Shout out to Plum, TeOz, c0r3, Protag, CK, AK, Paiman, DedSec & TeamPS</p>");
             $('footer .container .row .col-sm-12').append("<p class=\"text-muted italic\">\"What is dead may never die\"</p>");
 
-            $('footer .container .row .col-sm-12').append("<iframe src=\"https://www.youtube.com/embed/Sagg08DrO5U?autoplay=1\" style=\"border: none;\"></iframe>");
+            $('footer .container .row .col-sm-12').append("<iframe src=\"https://www.youtube.com/embed/8Ep_aPSrwYI?autoplay=1\" style=\"border: none;\"></iframe>");
         }
     });
 

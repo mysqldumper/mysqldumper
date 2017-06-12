@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteBase /
+
+RewriteRule ^/?$ /index.php
+RewriteRule ^view-db/(\w+)?$  /view_database.php?database=$1
