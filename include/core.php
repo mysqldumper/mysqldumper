@@ -118,6 +118,8 @@ class MSD
         if ($mysqli->connect_error) {
             return false;
         }
+        
+        $mysqli->set_charset("utf8");
 
         if (! $this->db) {
             $this->db = $mysqli;
