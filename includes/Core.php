@@ -2,8 +2,6 @@
 
 namespace MSD;
 
-use MSD\Template;
-
 class Core
 {
     /**
@@ -15,11 +13,6 @@ class Core
      * The router.
      */
     private static $router;
-
-    /**
-     * The templater engine.
-     */
-    public static $template;
 
     private static function registerErrorHandler()
     {
@@ -35,20 +28,13 @@ class Core
 
         self::$router = $router->getInstance();
 
-        self::$router->get('/', function () {
-            echo 'index';
-        });
+        self::$router->setNamespace('\MSD\Controllers');
+        self::$router->get('/', 'Home@getIndex');
 
         self::$router->run();
     }
 
-    private static function registerTemplater()
-    {
-        // Create templater
-        self::$template = new Template(self::getVersion());
-    }
-
-    private static function getVersion()
+    public static function getVersion()
     {
         return self::$version;
     }
@@ -70,9 +56,6 @@ class Core
     {
         // Setup the error handler
         self::registerErrorHandler();
-
-        // Register the template engine
-        self::registerTemplater();
 
         // Register router
         self::registerRouter();
