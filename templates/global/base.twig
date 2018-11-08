@@ -9,10 +9,19 @@
     {% include "global/header.twig" %}
 
     <main>
-        {% block content %}{% endblock %}
+        <div class="container-fluid">
+            <div class="row no-gutters">
+                <div class="col-12 col-md-3">
+                    {% include "global/sidebar.twig" %}
+                </div>
+
+                <div class="col-12 col-md-9 h-100vh">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
     </main>
 
-    {% include "global/footer.twig" %}
     <script type="text/javascript" src="{{ jsURL }}"></script>
 </body>
 </html>

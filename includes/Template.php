@@ -7,46 +7,55 @@ class Template
     /**
      * MSD version.
      */
-    private static $version;
+    private $version;
 
     /**
      * The Twig environment.
      */
-    private static $twig;
+    private $twig;
 
-    public static function display($template, $viewData = [])
+    public function __construct()
     {
-        echo self::render($template, $viewData);
-        exit;
-    }
+        // Set the version number
+        $bootstrap     = new \MSD\Bootstrap();
+        $this->version = $bootstrap->getVersion();
 
-    public static function render($template, $viewData = [])
-    {
         // Load the templates from filesystem
         $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../templates');
 
         // Prep the environment
-        $twig = new \Twig_Environment($loader, array(
+        $this->twig = new \Twig_Environment($loader, array(
             // 'cache' => '/path/to/compilation_cache',
             'debug' => true
         ));
-
-        // Set the version number
-        self::$version = \MSD\Core::getVersion();
-
-        $viewData = array_merge($viewData, self::getInitialViewData());
-
-        return $twig->render($template, $viewData);
     }
 
-    private static function getInitialViewData()
+    public function display($template, $viewData = [])
+    {
+        echo $this->render($template, $viewData);
+        exit;
+    }
+
+    public function render($template, $viewData = [])
+    {
+        $viewData = array_merge($viewData, $this->getInitialViewData());
+
+        return $this->twig->render($template, $viewData);
+    }
+
+    private function getInitialViewData()
     {
         $manifest = json_decode(file_get_contents(__DIR__ . '/../mix-manifest.json'), true);
 
         return [
             'cssURL'     => $manifest['/css/app.css'],
             'jsURL'      => $manifest['/js/app.js'],
-            'msdVersion' => self::$version,
+            'msdVersion' => $this->version,
         ];
+    }
+
+    public function getInstance()
+    {
+        return $this;
     }
 }

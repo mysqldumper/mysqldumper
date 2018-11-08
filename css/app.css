@@ -10466,3 +10466,21 @@ a.text-dark:focus {
   }
 }
 
+.h-100vh {
+  height: 100vh;
+}
+
+main > .container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+main > .container-fluid .sidebar {
+  background-color: #607D8B;
+  color: #EEEEEE;
+}
+
+main > .container-fluid .sidebar p {
+  color: #EEEEEE;
+}
+

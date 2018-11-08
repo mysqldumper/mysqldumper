@@ -2,13 +2,13 @@
 
 namespace MSD\Controllers;
 
-use MSD\Controllers\Base;
 use MSD\Template;
 
-class Home extends Base
+class Home extends \MSD\Controllers\Base
 {
     public function getIndex()
     {
-        Template::display('pages/install.twig');
+        $template = new Template();
+        return $this->template->display('pages/index.twig');
     }
 }
