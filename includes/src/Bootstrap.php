@@ -41,7 +41,7 @@ class Bootstrap
         $this->router = $router->init();
     }
 
-    public function checkInstallation()
+    public function checkInstallation() : void
     {
         if ($this->configFileExists() === false) {
             if ($this->router->onInstallPage() === false) {

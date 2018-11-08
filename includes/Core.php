@@ -8,7 +8,7 @@ class Core
      * Bootstrap MSD and get us ready to run.
      * @return \MSD\Core The core.
      */
-    public static function run()
+    public static function run() : \MSD\Core
     {
         // Call the Bootstrapper
         $bootstrap = new \MSD\src\Bootstrap();
