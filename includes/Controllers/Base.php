@@ -8,7 +8,7 @@ class Base
 
     public function __construct()
     {
-        $template       = new \MSD\Template();
+        $template       = new \MSD\src\Template();
         $this->template = $template->getInstance();
     }
 }

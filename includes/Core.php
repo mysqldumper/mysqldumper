@@ -4,10 +4,14 @@ namespace MSD;
 
 class Core
 {
+    /**
+     * Bootstrap MSD and get us ready to run.
+     * @return \MSD\Core The core.
+     */
     public static function run()
     {
         // Call the Bootstrapper
-        $bootstrap = new \MSD\Bootstrap();
+        $bootstrap = new \MSD\src\Bootstrap();
 
         // Setup the error handler
         $bootstrap->registerErrorHandler();

@@ -1,6 +1,6 @@
 <?php
 
-namespace MSD;
+namespace MSD\src;
 
 class Template
 {
@@ -17,11 +17,11 @@ class Template
     public function __construct()
     {
         // Set the version number
-        $bootstrap     = new \MSD\Bootstrap();
+        $bootstrap     = new \MSD\src\Bootstrap();
         $this->version = $bootstrap->getVersion();
 
         // Load the templates from filesystem
-        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../templates');
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../../templates');
 
         // Prep the environment
         $this->twig = new \Twig_Environment($loader, array(
@@ -45,7 +45,7 @@ class Template
 
     private function getInitialViewData()
     {
-        $manifest = json_decode(file_get_contents(__DIR__ . '/../mix-manifest.json'), true);
+        $manifest = json_decode(file_get_contents(__DIR__ . '/../../mix-manifest.json'), true);
 
         return [
             'cssURL'     => $manifest['/css/app.css'],

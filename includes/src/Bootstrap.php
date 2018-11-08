@@ -1,6 +1,6 @@
 <?php
 
-namespace MSD;
+namespace MSD\src;
 
 use \Whoops\Run;
 use \Whoops\Handler\PrettyPageHandler;
@@ -21,19 +21,19 @@ class Bootstrap
      * Get the version string.
      * @return string The version number.
      */
-    public function getVersion(): string
+    public function getVersion() : string
     {
         return self::$version;
     }
 
-    public function registerErrorHandler()
+    public function registerErrorHandler(): void
     {
         $whoops = new Run();
         $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
     }
 
-    public function registerRouter()
+    public function registerRouter() : void
     {
         // Create Router instance
         $router = new Router();
@@ -44,14 +44,16 @@ class Bootstrap
         $this->router->get('/', 'Home@getIndex');
     }
 
-    public function checkInstallation()
+    public function checkInstallation() : bool
     {
-        if (file_exists(__DIR__ . '/config.php')) return true;
+        if (file_exists(__DIR__ . '/config.php')) {
+            return true;
+        }
 
         return false;
     }
 
-    public function run()
+    public function run() : void
     {
         $this->router->run();
     }

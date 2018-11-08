@@ -1,6 +1,6 @@
 <?php
 
-namespace MSD;
+namespace MSD\src;
 
 class Router
 {
