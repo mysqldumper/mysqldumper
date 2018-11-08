@@ -2,7 +2,7 @@
 
 namespace MSD\Controllers;
 
-class Base
+class BaseController
 {
     public $template;
 

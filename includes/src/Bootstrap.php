@@ -38,15 +38,21 @@ class Bootstrap
         // Create Router instance
         $router = new Router();
 
-        $this->router = $router->getInstance();
-
-        $this->router->setNamespace('\MSD\Controllers');
-        $this->router->get('/', 'Home@getIndex');
+        $this->router = $router->init();
     }
 
-    public function checkInstallation() : bool
+    public function checkInstallation()
     {
-        if (file_exists(__DIR__ . '/config.php')) {
+        if ($this->configFileExists() === false) {
+            if ($this->router->onInstallPage() === false) {
+                $this->router->redirectToInstaller();
+            }
+        }
+    }
+
+    private function configFileExists() : bool
+    {
+        if (file_exists(__DIR__ . '/../config.php')) {
             return true;
         }
 

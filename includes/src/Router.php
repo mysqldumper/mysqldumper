@@ -2,20 +2,81 @@
 
 namespace MSD\src;
 
-class Router
+use \Bramus\Router\Router as BramusRouter;
+
+class Router extends BramusRouter
 {
-    private $router;
-
-    public function __construct()
+    /**
+     * Retrieve the current router instance.
+     * @return \MSD\src\Router The router instance.
+     */
+    public function getInstance() : Router
     {
-        // Create Router instance
-        $router = new \Bramus\Router\Router();
-
-        $this->router = $router;
+        return $this;
     }
 
-    public function getInstance()
+    /**
+     * Setup the router. Used only in bootstrapping, after that it should
+     * always be readily available.
+     * @return \MSD\src\Router The router instance.
+     */
+    public function init() : \MSD\src\Router
     {
-        return $this->router;
+        $this->setNamespace('\MSD\Controllers');
+
+        $this->initRoutes();
+
+        $this->set404('ErrorController@notFound');
+
+        return $this;
+    }
+
+    /**
+     * Setup and process all the routes required, as well as their associated
+     * controller.
+     * @return [type] [description]
+     */
+    public function initRoutes() : void
+    {
+        // Install
+        $this->get('/install', 'InstallController@getIndex');
+
+        // Index
+        $this->get('/', 'HomeController@getIndex');
+    }
+
+    /**
+     * Detect if we are on the install system. Used for making sure we don't
+     * try and redirect users who are already in the installer.
+     * @return bool True if we're on the installer.
+     */
+    public function onInstallPage() : bool
+    {
+        if ($this->getCurrentUri() === '/install') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Send a 301 redirect back to the browser.
+     * @param  string $location The URI to redirect to
+     * @return void
+     */
+    public function redirect(string $location) : void
+    {
+        header("Location: " . $this->getBasePath() . $location);
+        exit;
+    }
+
+    /**
+     * Fire a redirect to the installer.
+     * @return void
+     */
+    public function redirectToInstaller() : void
+    {
+        // redirect to the installation uri
+        $this->redirect('install');
     }
 }

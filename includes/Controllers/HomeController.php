@@ -2,7 +2,9 @@
 
 namespace MSD\Controllers;
 
-class Home extends \MSD\Controllers\Base
+use MSD\Controllers\BaseController;
+
+class HomeController extends BaseController
 {
     public function getIndex()
     {

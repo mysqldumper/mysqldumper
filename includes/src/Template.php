@@ -30,20 +30,20 @@ class Template
         ));
     }
 
-    public function display($template, $viewData = [])
+    public function display($template, $viewData = []) : void
     {
         echo $this->render($template, $viewData);
         exit;
     }
 
-    public function render($template, $viewData = [])
+    public function render($template, $viewData = []) : string
     {
         $viewData = array_merge($viewData, $this->getInitialViewData());
 
         return $this->twig->render($template, $viewData);
     }
 
-    private function getInitialViewData()
+    private function getInitialViewData() : array
     {
         $manifest = json_decode(file_get_contents(__DIR__ . '/../../mix-manifest.json'), true);
 
@@ -54,7 +54,7 @@ class Template
         ];
     }
 
-    public function getInstance()
+    public function getInstance() : \MSD\src\Template
     {
         return $this;
     }
