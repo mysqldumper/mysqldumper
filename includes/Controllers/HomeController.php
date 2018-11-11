@@ -8,6 +8,6 @@ class HomeController extends BaseController
 {
     public function getIndex()
     {
-        return $this->template->display('pages/index.twig');
+        return $this->router->redirect('dashboard');
     }
 }

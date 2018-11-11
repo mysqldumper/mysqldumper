@@ -6,7 +6,9 @@
         "twig/twig": "^2.5",
         "symfony/var-dumper": "^4.1",
         "filp/whoops": "^2.2",
-        "bramus/router": "^1.3"
+        "bramus/router": "^1.3",
+        "symfony/http-foundation": "^4.1",
+        "umpirsky/twig-php-function": "^0.2.0"
     },
     "license": "MIT",
     "authors": [

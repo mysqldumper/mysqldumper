@@ -1,0 +1,80 @@
+{% extends 'pages/install/base.twig' %}
+
+{% block frame %}
+    <div class="container-fluid">
+        <form method="post" action="/install">
+            <div class="row mb-3">
+                <div class="col mt-5">
+                    <h1>
+                        MSD
+                        <small class="text-muted">Installer</small>
+                    </h1>
+                </div>
+            </div>
+
+            {% if errors %}
+                <div class="row">
+                    <div class="col">
+                        {% for error in errors %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col mb-3">
+                    <p class="lead mb-0">Please follow the installer to configure MySQLDumper.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                    <div class="form-group">
+                        <label class="inline-label" for="mysql_host">Host</label>
+                        <input type="text" name="mysql_host" id="mysql_host" placeholder="localhost" value="{{ host }}" class="form-control" autofocus>
+                    </div>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <div class="form-group">
+                        <label class="inline-label" for="mysql_port">Port</label>
+                        <input type="number" name="mysql_port" min="0" id="mysql_port" placeholder="3306" value="{{ port }}" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <div class="form-group">
+                        <label class="inline-label" for="mysql_username">Username</label>
+                        <input type="text" name="mysql_username" id="mysql_username" placeholder="root" value="{{ user }}" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <div class="form-group">
+                        <label class="inline-label" for="mysql_password">Password</label>
+                        <input type="password" name="mysql_password" id="mysql_password" placeholder="toor" value="{{ pass }}" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col">
+                    <button class="btn btn-primary w-100">Install MySQLDumper</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col text-center">
+                    <p class="mb-0 text-muted">MySQLDumper {{ msdVersion }}</p>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

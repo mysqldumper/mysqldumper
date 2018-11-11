@@ -10470,6 +10470,27 @@ a.text-dark:focus {
   height: 100vh;
 }
 
+.form-group {
+  position: relative;
+}
+
+.form-group label.inline-label {
+  position: absolute;
+  left: 0.78em;
+  top: -0.67em;
+  padding: 0 5px;
+  text-transform: uppercase;
+  background-color: #fff;
+  margin: 0;
+  font-size: 0.7em;
+  color: #778898;
+}
+
+.form-control:focus {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
 main > .container-fluid {
   padding-left: 0;
   padding-right: 0;
@@ -10482,5 +10503,18 @@ main > .container-fluid .sidebar {
 
 main > .container-fluid .sidebar p {
   color: #EEEEEE;
+}
+
+#msd-installer .install-window {
+  width: calc(100vw - 400px);
+  background-image: url(https://i.imgur.com/wcppn3Y.jpg);
+  background-size: cover;
+  background-position: bottom center;
+}
+
+#msd-installer .install-frame {
+  width: 400px;
+  -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.75);
+          box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.75);
 }
 

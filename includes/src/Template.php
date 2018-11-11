@@ -6,13 +6,21 @@ class Template
 {
     /**
      * MSD version.
+     * @var string
      */
     private $version;
 
     /**
      * The Twig environment.
+     * @var Twig_Environment
      */
     private $twig;
+
+    /**
+     * Stored data.
+     * @var array
+     */
+    private $viewData = [];
 
     public function __construct()
     {
@@ -28,6 +36,14 @@ class Template
             // 'cache' => '/path/to/compilation_cache',
             'debug' => true
         ));
+
+        // Extensions
+        $functions = [
+            'get_defined_vars',
+            'dd'
+        ];
+
+        $this->twig->addExtension(new \Umpirsky\Twig\Extension\PhpFunctionExtension($functions));
     }
 
     public function display($template, $viewData = []) : void
@@ -39,6 +55,7 @@ class Template
     public function render($template, $viewData = []) : string
     {
         $viewData = array_merge($viewData, $this->getInitialViewData());
+        $viewData = array_merge($viewData, $this->viewData);
 
         return $this->twig->render($template, $viewData);
     }
@@ -52,6 +69,11 @@ class Template
             'jsURL'      => $manifest['/js/app.js'],
             'msdVersion' => $this->version,
         ];
+    }
+
+    public function add($key, $value) : void
+    {
+        $this->viewData[$key] = $value;
     }
 
     public function getInstance() : \MSD\src\Template

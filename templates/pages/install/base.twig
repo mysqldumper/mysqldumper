@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MySQLDumper Installation</title>
+    <link rel="stylesheet" type="text/css" href="{{ cssURL }}">
+</head>
+<body>
+    <main id="msd-installer">
+        <div class="d-flex">
+            <div class="h-100vh install-window"></div>
+            <div class="h-100vh install-frame">
+                {% block frame %}
+                {% endblock %}
+            </div>
+        </div>
+    </main>
+    <script type="text/javascript" src="{{ jsURL }}"></script>
+</body>
+</html>

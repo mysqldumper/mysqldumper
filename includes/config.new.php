@@ -2,10 +2,10 @@
 
 return [
     'mysql' => [
-        'host'     => 'localhost',
-        'port'     => 3306,
-        'username' => 'root',
-        'password' => '',
+        'host'     => '<!--HOST-->',
+        'port'     => '<!--PORT-->',
+        'username' => '<!--USER-->',
+        'password' => '<!--PASS-->',
         'charset'  => 'utf8',
     ]
 ];

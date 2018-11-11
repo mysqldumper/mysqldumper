@@ -2,14 +2,20 @@
 
 namespace MSD;
 
+use MSD\src\Session;
+
 class Core
 {
     /**
      * Bootstrap MSD and get us ready to run.
      * @return \MSD\Core The core.
      */
-    public static function run() : \MSD\Core
+    public static function run()
     {
+        // Start a session
+        $session = new Session;
+        $session->start();
+
         // Call the Bootstrapper
         $bootstrap = new \MSD\src\Bootstrap();
 

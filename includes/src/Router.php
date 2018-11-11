@@ -23,10 +23,9 @@ class Router extends BramusRouter
     public function init() : \MSD\src\Router
     {
         $this->setNamespace('\MSD\Controllers');
+        $this->set404('ErrorController@notFound');
 
         $this->initRoutes();
-
-        $this->set404('ErrorController@notFound');
 
         return $this;
     }
@@ -40,9 +39,13 @@ class Router extends BramusRouter
     {
         // Install
         $this->get('/install', 'InstallController@getIndex');
+        $this->post('/install', 'InstallController@postIndex');
 
         // Index
         $this->get('/', 'HomeController@getIndex');
+
+        // Dashboard
+        $this->get('/dashboard', 'DashboardController@getIndex');
     }
 
     /**
